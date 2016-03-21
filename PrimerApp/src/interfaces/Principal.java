@@ -43,6 +43,58 @@ public class Principal extends javax.swing.JFrame {
     int[] longitudPie = {4,5,13,2,8,10,208};
     boolean cab = false;
     boolean pie = false;
+    boolean r1 = false;
+    boolean r2 = false;
+    boolean r3 = false;
+    boolean r4 = false;
+
+    public boolean isCab() {
+        return cab;
+    }
+
+    public void setCab(boolean cab) {
+        this.cab = cab;
+    }
+
+    public boolean isPie() {
+        return pie;
+    }
+
+    public void setPie(boolean pie) {
+        this.pie = pie;
+    }
+
+    public boolean isR1() {
+        return r1;
+    }
+
+    public void setR1(boolean r1) {
+        this.r1 = r1;
+    }
+
+    public boolean isR2() {
+        return r2;
+    }
+
+    public void setR2(boolean r2) {
+        this.r2 = r2;
+    }
+
+    public boolean isR3() {
+        return r3;
+    }
+
+    public void setR3(boolean r3) {
+        this.r3 = r3;
+    }
+
+    public boolean isR4() {
+        return r4;
+    }
+
+    public void setR4(boolean r4) {
+        this.r4 = r4;
+    }
     
     public Principal() {
         initComponents();
@@ -123,7 +175,7 @@ public class Principal extends javax.swing.JFrame {
 
     private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
         // TODO add your handling code here:
-        JFileChooser dlg = new JFileChooser();
+        JFileChooser dlg = new JFileChooser(System.getProperty("user.home")+"/Desktop");
         dlg.setFileFilter(filter);
         dlg.setAcceptAllFileFilterUsed(false);
         int option = dlg.showOpenDialog(this);
@@ -164,7 +216,6 @@ public class Principal extends javax.swing.JFrame {
                   for (int columna = 0; columna < sheet.getColumns(); columna++){
                       if(columna == 0){
                           codigo = sheet.getCell(columna, fila).getContents();
-                          System.out.println("NUEVO CODIGO" + codigo);
                       }
                       nombre = sheet.getCell(columna, fila).getContents();
                       
@@ -217,7 +268,7 @@ public class Principal extends javax.swing.JFrame {
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
             String file = chooser.getSelectedFile().toString();
             txtFileDest.setText(file);
-            setDstPath(chooser.getSelectedFile()+"\\ARCHIVORESULTANTE.TXT");
+            setDstPath(chooser.getSelectedFile()+"\\NOMINAS.NOM");
             jButtonConverter.setEnabled(true);
             /*System.out.println("getCurrentDirectory(): " 
                +  chooser.getCurrentDirectory());
