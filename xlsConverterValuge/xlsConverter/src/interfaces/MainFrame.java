@@ -5,6 +5,7 @@
  */
 package interfaces;
 
+import clases.Registros;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -55,6 +56,7 @@ public class MainFrame extends javax.swing.JFrame {
     String fileInputPath ="";
     String fileOutputPath = "";
     int[] longitudCab = {4,5,8,8,4,4,2,10,10,3,1,12,36,2,141};
+    Registros reg = new Registros();
     String[] cab =  new String[] {"2110","52551","Creacion","Proceso","0017","0016","76","0100237254","servicio","ARS","0","Nominas.txt","VALUGE SA","20",""};
     String[] r1 =   new String[] {"2210","52551","","BENEF","1","CBU","0000000000","Importe1","Importe2","","Fecha","cuil","","","",""};
     String[] r2 =   new String[] {"2220","52551","","BENEF","NOMBRE","","",""};
@@ -219,7 +221,7 @@ public class MainFrame extends javax.swing.JFrame {
         if(chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
             String inputPath = chooser.getSelectedFile().toString();
             txtInputPath.setText(inputPath);
-            setFileInputPath(inputPath);
+            reg.setInputPath(inputPath);
             outputSearchBtn.setEnabled(true);
             
         }
@@ -232,9 +234,10 @@ public class MainFrame extends javax.swing.JFrame {
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.setAcceptAllFileFilterUsed(false);
         if(chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
-            String outputPath = chooser.getSelectedFile().toString();
+            String outputPath = chooser.getSelectedFile().toString()+"\\Nominas.txt";
             txtOutputPath.setText(outputPath);
-            setFileOutputPath(chooser.getSelectedFile()+"\\Nominas.txt");
+            setFileOutputPath(chooser.getSelectedFile()+"\\Nominas.txt");;
+            reg.setOutputPath(outputPath);
             convertBtn.setEnabled(true);
         }else{
             lanzarAlerta("Debe seleccionar un directorio destino");
@@ -243,106 +246,11 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void convertBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_convertBtnActionPerformed
         // TODO add your handling code here:
-        String valor ;
-        String ruta;
-        String formato ="";
-        String codigo = "";
-        String beneficiario = "";
-        String cbu = "";
-        String nombre = "";
-        String concepto = "";
-        String importe = "";
-        String fechaVto = "";
-        String cuil = "0000";
-        int totalReg = 2;
-        int total2210 = 0;
-        ruta = getFileOutputPath();
-        File archivo = new File(ruta);
-        BufferedWriter bw;
-        Workbook workbook;
+        String resultado = "";
         try {
-            workbook = Workbook.getWorkbook(new File(getFileInputPath()));
-            Sheet sheet = workbook.getSheet(0);
-            lanzarAlerta(sheet.getCell(2, 1).getContents());
-            if(!sheet.getCell(0, 0).getContents().equals("NOMINAS")){
-                lanzarAlerta("El Archivo no es correcto");
-                lanzarAlerta("Ingrese un nuevo archivo");
-                resetConfig();
-            }else{
-                Date creacion = new Date();
-                cab[2] = new SimpleDateFormat("yyyyMMdd").format(creacion);
-                cab[3] = sheet.getCell(0, 1).getContents();
-                cab[8] = sheet.getCell(2, 1).getContents().toUpperCase();
-                fechaVto = sheet.getCell(1, 1).getContents();
-                concepto = sheet.getCell(3, 1).getContents().toUpperCase();
-                totalReg+=1;
-                System.out.println(cab[8]);
-                bw = new BufferedWriter(new FileWriter(archivo));
-                for (int i = 0; i < cab.length; i++){
-                    formato = "%-"+longitudCab[i]+"s";
-                    bw.write(String.format(formato, cab[i]));
-                }
-                for (int fila = 2; fila < sheet.getRows(); fila++){
-                    beneficiario = sheet.getCell(0,fila).getContents();
-                    nombre = sheet.getCell(1,fila).getContents().toUpperCase();
-//                    concepto = sheet.getCell(2,fila).getContents().toUpperCase();
-                    cbu = sheet.getCell(2,fila).getContents();
-                    importe = sheet.getCell(3,fila).getContents();
-                    String[] importeSplit = importe.split(",");
-                    lanzarAlerta(importe);
-//                    fechaVto = sheet.getCell(5,fila).getContents();
-                    cuil = "0000"+sheet.getCell(4,fila).getContents();
-                    r1[3] = beneficiario;
-                    r1[5] = cbu;
-                    r1[7] = new String (new char[13 - importeSplit[0].length()]).replace('\0', '0') + importeSplit[0];
-                    r1[8] = new String (new char[2 - importeSplit[1].length()]).replace('\0', '0') + importeSplit[1];
-                    r1[10] = fechaVto;
-                    r1[11] = cuil;
-                    total1 += Integer.parseInt(r1[7]);
-                    total2 += Integer.parseInt(r1[8]);
-                    writeFile(bw, r1, longitudR1);
-                    /*for (int i = 0; i < r1.length; i++){
-                        formato = "%-"+longitudR1[i]+"s";
-                        bw.write(String.format(formato, r1[i]));
-                    }*/
-                            
-                    r2[3] = beneficiario;
-                    r2[4] = nombre;
-                    writeFile(bw, r2, longitudR2);
-                    /*for (int i = 0; i < r2.length; i++){
-                        formato = "%-"+longitudR2[i]+"s";
-                        bw.write(String.format(formato, r2[i]));
-                    }*/
-                    
-                    r3[3] = beneficiario;
-                    writeFile(bw, r3, longitudR3);
-                    /*for (int i = 0; i < r3.length; i++){
-                        formato = "%-"+longitudR3[i]+"s";
-                        bw.write(String.format(formato, r3[i]));
-                    }*/
-                    
-                    r4[3] = beneficiario;
-                    r4[4] = concepto;
-                    writeFile(bw, r4, longitudR4);
-                    /*for (int i = 0; i < r4.length; i++){
-                        formato = "%-"+longitudR4[i]+"s";
-                        bw.write(String.format(formato, r4[i]));
-                    }*/
-                    
-                    total2210++;
-                }
-                totalReg = (total2210*4)+2;
-                if(total2/100 != 0){
-                    total1 += total2/100;
-                    total2 = total2%100;
-                }
-                pie[2] = new String (new char[13 - String.valueOf(total1).length()]).replace('\0', '0') + String.valueOf(total1);
-                pie[3] = new String (new char[2 - String.valueOf(total2).length()]).replace('\0', '0') + String.valueOf(total2);
-                pie[4] = new String (new char[8 - String.valueOf(total2210).length()]).replace('\0', '0') + String.valueOf(total2210);
-                pie[5] = new String (new char[10 - String.valueOf(totalReg).length()]).replace('\0', '0') + String.valueOf(totalReg);
-                writeFile(bw, pie, longitudPie);
-                bw.close();
-                
+            resultado = reg.convert();
+            if (!resultado.equals("")){
+                lanzarAlerta(resultado);
             }
         } catch (IOException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
