@@ -11,7 +11,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.security.Principal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -254,7 +253,7 @@ public class MainFrame extends javax.swing.JFrame {
         String concepto = "";
         String importe = "";
         String fechaVto = "";
-        String cuil = "";
+        String cuil = "0000";
         int totalReg = 2;
         int total2210 = 0;
         ruta = getFileOutputPath();
@@ -265,10 +264,6 @@ public class MainFrame extends javax.swing.JFrame {
             workbook = Workbook.getWorkbook(new File(getFileInputPath()));
             Sheet sheet = workbook.getSheet(0);
             lanzarAlerta(sheet.getCell(2, 1).getContents());
-            String test = sheet.getCell(2, 1).getContents();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yy");
-            Date prueba = formatter.parse(test);
-            
             if(!sheet.getCell(0, 0).getContents().equals("NOMINAS")){
                 lanzarAlerta("El Archivo no es correcto");
                 lanzarAlerta("Ingrese un nuevo archivo");
@@ -277,7 +272,9 @@ public class MainFrame extends javax.swing.JFrame {
                 Date creacion = new Date();
                 cab[2] = new SimpleDateFormat("yyyyMMdd").format(creacion);
                 cab[3] = sheet.getCell(0, 1).getContents();
-                cab[8] = sheet.getCell(1, 1).getContents().toUpperCase();
+                cab[8] = sheet.getCell(2, 1).getContents().toUpperCase();
+                fechaVto = sheet.getCell(1, 1).getContents();
+                concepto = sheet.getCell(3, 1).getContents().toUpperCase();
                 totalReg+=1;
                 System.out.println(cab[8]);
                 bw = new BufferedWriter(new FileWriter(archivo));
@@ -288,13 +285,13 @@ public class MainFrame extends javax.swing.JFrame {
                 for (int fila = 2; fila < sheet.getRows(); fila++){
                     beneficiario = sheet.getCell(0,fila).getContents();
                     nombre = sheet.getCell(1,fila).getContents().toUpperCase();
-                    concepto = sheet.getCell(2,fila).getContents().toUpperCase();
-                    cbu = sheet.getCell(3,fila).getContents();
-                    importe = sheet.getCell(4,fila).getContents();
+//                    concepto = sheet.getCell(2,fila).getContents().toUpperCase();
+                    cbu = sheet.getCell(2,fila).getContents();
+                    importe = sheet.getCell(3,fila).getContents();
                     String[] importeSplit = importe.split(",");
                     lanzarAlerta(importe);
-                    fechaVto = sheet.getCell(5,fila).getContents();
-                    cuil = sheet.getCell(6,fila).getContents();
+//                    fechaVto = sheet.getCell(5,fila).getContents();
+                    cuil = "0000"+sheet.getCell(4,fila).getContents();
                     r1[3] = beneficiario;
                     r1[5] = cbu;
                     r1[7] = new String (new char[13 - importeSplit[0].length()]).replace('\0', '0') + importeSplit[0];
@@ -350,8 +347,6 @@ public class MainFrame extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         } catch (BiffException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
         
