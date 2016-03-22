@@ -62,11 +62,11 @@ public class Registros {
         String importe;
         String[] importeSplit;
         String cuil;
+        String[] data = new String[5];
         int total1=0;
         int total2=0;
         int total2210=0;
         int totalReg;
-        System.out.println(this.getOutputPath());
         File archivo = new File(this.getOutputPath());
         BufferedWriter bw;
         Workbook workbook;
@@ -81,19 +81,35 @@ public class Registros {
             cab[8] = sheet.getCell(2, 1).getContents().toUpperCase();
             String fechaVto = sheet.getCell(1, 1).getContents();
             String concepto = sheet.getCell(3, 1).getContents().toUpperCase();
+            String res = checkCab(fechaVto,concepto,cab[3],cab[8]);
+            if(!res.equals("")){
+                return res;
+            }
             bw = new BufferedWriter(new FileWriter(archivo));
             this.writeFile(bw, cab, longitudCab);
             for (int fila = 2; fila < sheet.getRows(); fila++){
                 beneficiario = sheet.getCell(0,fila).getContents();
+                if(beneficiario.equals("")){
+                    return "";
+                }
                 nombre = sheet.getCell(1,fila).getContents().toUpperCase();
                 cbu = sheet.getCell(2,fila).getContents();
                 importe = sheet.getCell(3,fila).getContents();
                 importeSplit = importe.split(",");
                 cuil = "0000"+sheet.getCell(4,fila).getContents();
+                res = checkData(beneficiario,nombre,cbu,importe,cuil);
+                if(!res.equals("")){
+                    return res;
+                }
                 r1[3] = beneficiario;
                 r1[5] = cbu;
                 r1[7] = new String (new char[13 - importeSplit[0].length()]).replace('\0', '0') + importeSplit[0];
-                r1[8] = new String (new char[2 - importeSplit[1].length()]).replace('\0', '0') + importeSplit[1];
+                System.out.println(importeSplit.length);
+                if(importeSplit.length > 1 ){
+                    r1[8] = new String (new char[2 - importeSplit[1].length()]).replace('\0', '0') + importeSplit[1];
+                } else {
+                    r1[8] = "00";
+                }
                 r1[10] = fechaVto;
                 r1[11] = cuil;
                 total1 += Integer.parseInt(r1[7]);
@@ -126,10 +142,44 @@ public class Registros {
     
     private void writeFile(BufferedWriter bw, String[] data, int[] length) throws IOException{
         String formato ="";
-        bw.newLine();
         for (int i = 0; i < data.length; i++){
             formato = "%-"+length[i]+"s";
             bw.write(String.format(formato, data[i]));
         }
+        bw.newLine();
+    }
+    
+    private String checkData(String beneficiario,String nombre,String cbu,String importe,String cuil){
+        String error ="";
+        if(beneficiario.length() != 18){
+            error+= "El ID beneficiario debe tener 18 caracteres ("+beneficiario+"), reviselo. ";
+        }
+        if(nombre.length() > 36 || nombre.equals("")){
+            error+="El Nombre es invalido ("+nombre+")";
+        }
+        if(cbu.length() != 22){
+            error+="El CBU no es correcto "+cbu+" ";
+        }
+        if(cuil.length() != 15){
+            error+="El cuil no es valido ("+cuil+") ";
+        }
+        return error;
+        
+    }
+    
+    private String checkCab(String vto, String concepto,String fechaProc, String Servicio){
+        String error ="";
+        if(vto.length() != 8 || fechaProc.length() != 8){
+            error+="Verifique las fechas ingresadas. "+vto+" - "+fechaProc+" ";
+        }else if (Integer.parseInt(vto) >= Integer.parseInt(fechaProc)){
+            error+="La fecha de vencimiento debe ser menor a la fecha de proceso";
+        }
+        if(concepto.length() >40 || concepto.equals("")){
+            error+="el concepto ingresado no es valido. ";
+        }
+        if(Servicio.length() >10 || Servicio.equals("")){
+            error+="El codigo de servicio no es valido";
+        }
+        return error;
     }
 }
