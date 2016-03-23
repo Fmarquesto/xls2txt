@@ -8,7 +8,6 @@ package interfaces;
 import clases.Registros;
 import java.io.IOException;
 import java.net.URL;
-import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -19,7 +18,7 @@ import jxl.read.biff.BiffException;
 
 /**
  *
- * @author fedem
+ * @author Federico Marquesto - fede.marquesto@gmail.com
  */
 public class MainFrame extends javax.swing.JFrame {
 
@@ -55,13 +54,14 @@ public class MainFrame extends javax.swing.JFrame {
         exitBtn = new javax.swing.JButton();
         convertBtn = new javax.swing.JButton();
         convertRes = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Convertidor VALUGE");
+        setTitle("xls a txt - VALUGE");
         setResizable(false);
 
         txtInputPath.setEditable(false);
-        txtInputPath.setText("seleccione el archivo excel \".xls\"");
+        txtInputPath.setText("Seleccione el archivo excel \".xls\"");
 
         inputSearchBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/findFile.png"))); // NOI18N
         inputSearchBtn.setText("Cargar Archivo");
@@ -72,7 +72,7 @@ public class MainFrame extends javax.swing.JFrame {
         });
 
         txtOutputPath.setEditable(false);
-        txtOutputPath.setText("seleccione el directorio donde se guardara el archivo");
+        txtOutputPath.setText("Seleccione el directorio donde se guardará el archivo");
 
         outputSearchBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/finDir.png"))); // NOI18N
         outputSearchBtn.setText("Seleccione");
@@ -99,10 +99,12 @@ public class MainFrame extends javax.swing.JFrame {
         });
 
         convertRes.setEditable(false);
-        convertRes.setText("resultado del proceso...");
-        convertRes.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                convertResActionPerformed(evt);
+        convertRes.setText("Resultado del proceso...");
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/help.png"))); // NOI18N
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel1MouseClicked(evt);
             }
         });
 
@@ -112,23 +114,22 @@ public class MainFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(txtOutputPath, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
-                            .addComponent(txtInputPath))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(inputSearchBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(outputSearchBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(exitBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(convertBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(convertRes, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(txtOutputPath, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
+                    .addComponent(txtInputPath))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(inputSearchBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(outputSearchBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 10, Short.MAX_VALUE)
+                .addComponent(convertBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(convertRes, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(exitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -145,16 +146,14 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(convertBtn)
                     .addComponent(convertRes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(exitBtn))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(exitBtn)
+                    .addComponent(jLabel1)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void convertResActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_convertResActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_convertResActionPerformed
 
     private void exitBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitBtnMouseClicked
         // TODO add your handling code here:
@@ -181,12 +180,15 @@ public class MainFrame extends javax.swing.JFrame {
         chooser.setDialogTitle("Guardar en...");
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.setAcceptAllFileFilterUsed(false);
+        System.out.print(reg.getOutputPath());
         if(chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
             txtOutputPath.setText(chooser.getSelectedFile().toString()+"\\Nominas.txt");
             reg.setOutputPath(chooser.getSelectedFile().toString()+"\\Nominas.txt");
             convertBtn.setEnabled(true);
         }else{
-            lanzarAlerta("Debe seleccionar un directorio destino");
+            if(reg.getOutputPath() == null){
+                lanzarAlerta("Debe seleccionar un directorio destino");
+            }
         }
     }//GEN-LAST:event_outputSearchBtnActionPerformed
 
@@ -197,26 +199,30 @@ public class MainFrame extends javax.swing.JFrame {
             resultado = reg.convert();
             if (!resultado.equals("")){
                 this.lanzarAlerta(resultado);
-                this.resetConfig();
-                convertRes.setText(resultado);
+                this.resetConfig(resultado);
             }else{
                 lanzarAlerta("Archivo Generado con Exito");
-                convertRes.setText("Archivo generado con exito");
+                this.resetConfig("Archivo generado con Exito");
             }
         } catch (IOException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
             lanzarAlerta("Ocurrio un error al generar el archivo");
-            resetConfig();
+            resetConfig("Ocurrio un error al generar el archivo");
         } catch (BiffException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
             lanzarAlerta("Ocurrio un error al leer el Excel");
-            resetConfig();
+            resetConfig("Ocurrio un error al leer el Excel");
         } catch (NumberFormatException ex){
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
             lanzarAlerta("Error de formato, revise importe y fechas");
-            resetConfig();
+            resetConfig("Ocurrio un error al leer el Excel");
         }
     }//GEN-LAST:event_convertBtnActionPerformed
+
+    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+        // TODO add your handling code here:
+        lanzarAlerta("Software desarrollado por:\nFederico Marquestó\nContacto: fede.marquesto@gmail.com");
+    }//GEN-LAST:event_jLabel1MouseClicked
     
     private void lanzarAlerta(String msj){
         JOptionPane.showMessageDialog(null, msj);
@@ -225,12 +231,14 @@ public class MainFrame extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null, valor);
     }
     
-    private void resetConfig(){
+    private void resetConfig(String res){
         txtInputPath.setText("seleccione el archivo excel \".xls\"");
         txtOutputPath.setText("seleccione el directorio donde se guardara el archivo");
-        convertRes.setText("resultado del proceso...");
+        convertRes.setText(res);
         outputSearchBtn.setEnabled(false);
         convertBtn.setEnabled(false);
+        reg.setInputPath(null);
+        reg.setOutputPath(null);
     }
         
     /**
@@ -273,6 +281,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JTextField convertRes;
     private javax.swing.JButton exitBtn;
     private javax.swing.JButton inputSearchBtn;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JButton outputSearchBtn;
     private javax.swing.JTextField txtInputPath;
     private javax.swing.JTextField txtOutputPath;

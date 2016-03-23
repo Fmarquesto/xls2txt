@@ -72,7 +72,7 @@ public class Registros {
         Workbook workbook;
         workbook = Workbook.getWorkbook(new File(this.getInputPath()));
         Sheet sheet = workbook.getSheet(0);
-        if(!sheet.getCell(0, 0).getContents().equals("NOMINAS")){
+        if(!sheet.getCell(0, 0).getContents().equals("FECHA DE PROCESO")){
             return "El Archivo no es correcto." + " Ingrese un nuevo archivo";
         }else{
             Date creacion = new Date();
@@ -87,16 +87,16 @@ public class Registros {
             }
             bw = new BufferedWriter(new FileWriter(archivo));
             this.writeFile(bw, cab, longitudCab);
-            for (int fila = 2; fila < sheet.getRows(); fila++){
+            for (int fila = 3; fila < sheet.getRows(); fila++){
                 beneficiario = sheet.getCell(0,fila).getContents();
                 if(beneficiario.equals("")){
                     return "";
                 }
-                nombre = sheet.getCell(1,fila).getContents().toUpperCase();
-                cbu = sheet.getCell(2,fila).getContents();
-                importe = sheet.getCell(3,fila).getContents();
+                nombre = sheet.getCell(3,fila).getContents().toUpperCase();
+                cbu = sheet.getCell(1,fila).getContents();
+                importe = sheet.getCell(5,fila).getContents();
                 importeSplit = importe.split(",");
-                cuil = "0000"+sheet.getCell(4,fila).getContents();
+                cuil = "0000"+sheet.getCell(2,fila).getContents();
                 res = checkData(beneficiario,nombre,cbu,importe,cuil);
                 if(!res.equals("")){
                     return res;
@@ -104,9 +104,13 @@ public class Registros {
                 r1[3] = beneficiario;
                 r1[5] = cbu;
                 r1[7] = new String (new char[13 - importeSplit[0].length()]).replace('\0', '0') + importeSplit[0];
-                System.out.println(importeSplit.length);
+                //System.out.println(importeSplit.length);
                 if(importeSplit.length > 1 ){
+                    if(importeSplit[1].length() == 1){
+                        importeSplit[1] = importeSplit[1]+"0";
+                    }
                     r1[8] = new String (new char[2 - importeSplit[1].length()]).replace('\0', '0') + importeSplit[1];
+                    System.out.print(importeSplit[1]);
                 } else {
                     r1[8] = "00";
                 }
@@ -163,6 +167,9 @@ public class Registros {
         if(cuil.length() != 15){
             error+="El cuil no es valido ("+cuil+") ";
         }
+        if(importe.equals("")){
+            error+="El importe para "+nombre+" no puede estar vacio";
+        }
         return error;
         
     }
@@ -171,8 +178,8 @@ public class Registros {
         String error ="";
         if(vto.length() != 8 || fechaProc.length() != 8){
             error+="Verifique las fechas ingresadas. "+vto+" - "+fechaProc+" ";
-        }else if (Integer.parseInt(vto) >= Integer.parseInt(fechaProc)){
-            error+="La fecha de vencimiento debe ser menor a la fecha de proceso";
+        }else if (Integer.parseInt(vto) < Integer.parseInt(fechaProc)){
+            error+="La fecha de proceso ("+fechaProc+") debe ser menor a la fecha de Acreditacion ("+vto+")";
         }
         if(concepto.length() >40 || concepto.equals("")){
             error+="el concepto ingresado no es valido. ";
