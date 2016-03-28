@@ -87,6 +87,7 @@ public class Registros {
             }
             bw = new BufferedWriter(new FileWriter(archivo));
             this.writeFile(bw, cab, longitudCab);
+            bw.newLine();
             for (int fila = 3; fila < sheet.getRows(); fila++){
                 beneficiario = sheet.getCell(0,fila).getContents();
                 if(beneficiario.equals("")){
@@ -119,14 +120,18 @@ public class Registros {
                 total1 += Integer.parseInt(r1[7]);
                 total2 += Integer.parseInt(r1[8]);
                 writeFile(bw, r1, longitudR1);
+                bw.newLine();
                 r2[3] = beneficiario;
                 r2[4] = nombre;
                 writeFile(bw, r2, longitudR2);
+                bw.newLine();
                 r3[3] = beneficiario;
                 writeFile(bw, r3, longitudR3);
+                bw.newLine();
                 r4[3] = beneficiario;
                 r4[4] = concepto;
                 writeFile(bw, r4, longitudR4);
+                bw.newLine();
                 total2210++;
             }
             totalReg = (total2210*4)+2;
@@ -150,7 +155,6 @@ public class Registros {
             formato = "%-"+length[i]+"s";
             bw.write(String.format(formato, data[i]));
         }
-        bw.newLine();
     }
     
     private String checkData(String beneficiario,String nombre,String cbu,String importe,String cuil){
