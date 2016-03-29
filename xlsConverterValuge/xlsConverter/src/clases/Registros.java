@@ -96,6 +96,9 @@ public class Registros {
                 nombre = sheet.getCell(3,fila).getContents().toUpperCase();
                 cbu = sheet.getCell(1,fila).getContents();
                 importe = sheet.getCell(5,fila).getContents();
+                if(importe.equals("0")){
+                    continue;
+                }
                 importeSplit = importe.split(",");
                 cuil = "0000"+sheet.getCell(2,fila).getContents();
                 res = checkData(beneficiario,nombre,cbu,importe,cuil);
